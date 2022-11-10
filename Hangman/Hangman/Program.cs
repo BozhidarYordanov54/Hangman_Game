@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Hangman
@@ -9,20 +11,35 @@ namespace Hangman
         static void Main(string[] args)
         {
             Console.Title = "Hanged Man";
-            GameStartupMenu();
+            //Console.SetWindowSize(95, 25);
+            //Console.BufferHeight = 500;
+            //Console.BufferWidth = 100;
 
-            string[] hangman = HangmanCharachter();
-            string[] wordsDictionary = Dictionary();
+            while (true)
+            {
+                Console.Clear();
+                GameStartupMenu();
 
-            string randomWord;
-            char[] blankSpaces, wordSplit;
-            GeneratingGame(wordsDictionary, out randomWord, out blankSpaces, out wordSplit);
+                string[] hangman = HangmanCharachter();
+                string[] wordsDictionary = Dictionary();
 
-            bool isHanged = GameLogic(hangman, randomWord, blankSpaces, wordSplit);
-            EndGameGreetings(randomWord, isHanged, hangman);
+                string randomWord;
+                char[] blankSpaces, wordSplit;
+
+                Stopwatch sw = Stopwatch.StartNew();
+                GeneratingGame(wordsDictionary, out randomWord, out blankSpaces, out wordSplit);
+
+                bool isHanged = GameLogic(hangman, randomWord, blankSpaces, wordSplit);
+
+                sw.Stop();
+                TimeSpan gameTime = sw.Elapsed;
+
+                EndGameGreetings(randomWord, isHanged, hangman, gameTime);
+                
+            }
         }
 
-        private static void EndGameGreetings(string randomWord, bool isHanged, string[] hangman)
+        private static void EndGameGreetings(string randomWord, bool isHanged, string[] hangman, TimeSpan gameTime)
         {
             if (isHanged)
             {
@@ -36,15 +53,23 @@ namespace Hangman
                 Console.WriteLine("\nYou died!");
                 Console.WriteLine($"Your word was: {randomWord}");
 
-                Console.WriteLine("To close the windows press any key.");
+                Console.WriteLine($"\nTime elapsed: {gameTime.Minutes:d2} : {gameTime.Seconds:d2}");
+
+                Console.WriteLine("\nPress any key to go back to main menu.");
                 Console.ReadKey();
             }
             else
             {
+                string gameState = "CONGRATULATIONS YOU WON!";
+                Console.SetCursorPosition((Console.WindowWidth - gameState.Length) / 2, Console.CursorTop);
+                Console.WriteLine(gameState);
+
                 Console.WriteLine("\nCongrats you won!");
                 Console.WriteLine("Thanks for playing.");
 
-                Console.WriteLine("To close the windows press any key.");
+                Console.WriteLine($"\nTime elapsed: {gameTime.Minutes:d2} : {gameTime.Seconds:d2}");
+
+                Console.WriteLine("\nPress any key to go back to main menu.");
                 Console.ReadKey();
             }
         }
@@ -59,7 +84,10 @@ namespace Hangman
             //Game logic
             while (lives >= 0)
             {
-                Console.Clear();
+                bool toClean = true;
+
+                
+
                 bool isGuessed = false;
 
                 if (lives == 0)
@@ -95,17 +123,24 @@ namespace Hangman
 
                 if (guessedLetters.Contains(letterGuess))
                 {
-                    Console.WriteLine("\nThis letter was already guessed!");
+                    Console.Clear();
+                    Console.WriteLine("\n *** Hint: This letter was already guessed!");
                     Console.WriteLine("Try another one.");
                     Console.WriteLine("No lives have been taken away.\n");
+                    //Checking to clean the console
+                    toClean = false;
 
                     continue;
                 }
 
                 if (letterGuess >= 0 && letterGuess <= 64 || letterGuess >= 91 && letterGuess <= 96 || letterGuess >= 123 && letterGuess <= 127)
                 {
-                    Console.WriteLine("\nYour input was wrong! Only letters from the latin alphabet are allowed");
+                    Console.Clear();
+                    Console.WriteLine("\n *** ERROR: Invalid input! Only letters from the latin alphabet are allowed");
                     Console.WriteLine("Your lives remain the same.\n");
+
+                    toClean = false;
+
                     continue;
                 }
                 //Writing blank spaces/ already guessed letters
@@ -115,8 +150,6 @@ namespace Hangman
                     {
                         if (wordSplit[i] == letterGuess)
                         {
-                            
-                            
                             blankSpaces[i] = letterGuess;
                         }
                     }
@@ -130,6 +163,7 @@ namespace Hangman
                 }
                 else if (!wordSplit.Contains(letterGuess))
                 {
+                    Console.Clear();
                     //Drawing and taking lives out
                     switch (lives)
                     {
@@ -158,7 +192,10 @@ namespace Hangman
 
                 }
 
-                
+                if (toClean)
+                {
+                    Console.Clear();
+                }
             }
 
             return isHanged;
@@ -171,26 +208,57 @@ namespace Hangman
 
             while (input != "1" || input != "Start game" || input != "5" || input != "Exit")
             {
+                
                 string welcome = "HANG - MAN";
                 string creator = "MADE BY: Bozhidar Yordanov_2022";
-                //Game name
+                //Game name, Creator
                 Console.SetCursorPosition((Console.WindowWidth - welcome.Length) / 2, Console.CursorTop);
                 Console.WriteLine(welcome);
                 //Creator
                 Console.SetCursorPosition((Console.WindowWidth - creator.Length) / 2, Console.CursorTop);
                 Console.WriteLine(creator);
+
                 //Main menu
-                Console.WriteLine("\n1. Start game");
-                Console.WriteLine("2. How to play?");
-                Console.WriteLine("3. Music (not added)");
-                Console.WriteLine("4. Choose dificulty (not added)");
-                Console.WriteLine("5. Settings");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine();
 
-                Console.WriteLine("\nPlease use numerics to navigate trough the menu's!");
+                string gameStart = "-= 1. Start game =-";
+                Console.SetCursorPosition((Console.WindowWidth - gameStart.Length) / 2, Console.CursorTop);
+                Console.WriteLine(gameStart);
 
-                Console.WriteLine("\n1 - Start game, 2 - How to play?, 3 - Music, 4 - Settings, 5 - Settings, 6 - Exit");
-                Console.WriteLine("==================================================================================");
+                string directionsMenu = "-= 2. How to play? =-";
+                Console.SetCursorPosition((Console.WindowWidth - directionsMenu.Length) / 2, Console.CursorTop);
+                Console.WriteLine(directionsMenu);
+
+                string musicMenu = "-= 3. Music (not added) =-";
+                Console.SetCursorPosition((Console.WindowWidth - musicMenu.Length) / 2, Console.CursorTop);
+                Console.WriteLine(musicMenu);
+
+                string difficultyMenu = "-= 4. Choose dificulty (not added) =-";
+                Console.SetCursorPosition((Console.WindowWidth - difficultyMenu.Length) / 2, Console.CursorTop);
+                Console.WriteLine(difficultyMenu);
+
+                string settingMenu = "-= 5. Settings =-";
+                Console.SetCursorPosition((Console.WindowWidth - settingMenu.Length) / 2, Console.CursorTop);
+                Console.WriteLine(settingMenu);
+
+                string exitMenu = "-= 6. Exit =-";
+                Console.SetCursorPosition((Console.WindowWidth - exitMenu.Length) / 2, Console.CursorTop);
+                Console.WriteLine(exitMenu);
+
+                Console.WriteLine("\n");
+                string navInstruct = "-= Please use numerics to navigate trough the menu's! =-";
+                Console.SetCursorPosition((Console.WindowWidth - navInstruct.Length) / 2, Console.CursorTop);
+                Console.WriteLine(navInstruct);
+
+                Console.WriteLine("\n");
+                string meanings = "-= 1 - Start game, 2 - How to play?, 3 - Music, 4 - Settings, 5 - Settings, 6 - Exit =-";
+                Console.SetCursorPosition((Console.WindowWidth - meanings.Length) / 2, Console.CursorTop);
+                Console.WriteLine(meanings);
+                //Console.WriteLine("\n1 - Start game, 2 - How to play?, 3 - Music, 4 - Settings, 5 - Settings, 6 - Exit");
+
+                string bottomLine = "============================================================================================";
+                Console.SetCursorPosition((Console.WindowWidth - bottomLine.Length) / 2, Console.CursorTop);
+                Console.WriteLine(bottomLine);
 
                 input = Console.ReadLine();
 
@@ -214,8 +282,6 @@ namespace Hangman
                 //Choosing dificutlty(not working)
                 else if (input == "4" || input == "Choose difficulty")
                 {
-                   
-
                     string difficulty = string.Empty;
 
                     while (difficulty != "4" || difficulty != "Back to main menu")
@@ -246,10 +312,8 @@ namespace Hangman
                             Console.Clear();
                             break;
                         }
-
                         
                     }
-
                     
                 }
                 //How to play
@@ -273,7 +337,7 @@ namespace Hangman
                 //Music - To be featured
                 else if (input == "3" || input == "Music")
                 {
-
+                    Console.Clear();
                 }
                 //Settings
                 else if (input == "5" || input == "Settings")
@@ -287,12 +351,31 @@ namespace Hangman
                         Console.SetCursorPosition((Console.WindowWidth - welcome.Length) / 2, Console.CursorTop);
                         Console.WriteLine(currentMenu = "SETTINGS");
 
-                        Console.WriteLine("\n1. Choose letter color");
-                        Console.WriteLine("2. Choose background color");
-                        Console.WriteLine("3. Back to main menu");
-                        Console.WriteLine("\nPlease use numerics to navigate trough the menu's!");
-                        Console.WriteLine("\n1 - Choose letter color, 2 - Choose background color, 3 - Back to main menu");
-                        Console.WriteLine("============================================================================");
+                        Console.WriteLine();
+                        string letterColor = "-= 1. Choose letter color =-";
+                        Console.SetCursorPosition((Console.WindowWidth - letterColor.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(letterColor);
+
+                        string backgroundColor = "-= 2. Choose background color =-";
+                        Console.SetCursorPosition((Console.WindowWidth - backgroundColor.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(backgroundColor);
+
+                        string backToMenu = "-= 3. Back to main menu =-";
+                        Console.SetCursorPosition((Console.WindowWidth - backToMenu.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(backToMenu);
+
+                        Console.WriteLine();
+                        string navigation = "-= Please use numerics to navigate trough the menu's! =-";
+                        Console.SetCursorPosition((Console.WindowWidth - navigation.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(navigation);
+
+                        string meaining = "-= 1 - Choose letter color, 2 - Choose background color, 3 - Back to main menu =-";
+                        Console.SetCursorPosition((Console.WindowWidth - meaining.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(meaining);
+
+                        string bottomLineSetting = "============================================================================";
+                        Console.SetCursorPosition((Console.WindowWidth - bottomLineSetting.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(bottomLineSetting);
 
                         settingCommands = string.Empty;
 
@@ -307,14 +390,40 @@ namespace Hangman
                                 Console.SetCursorPosition((Console.WindowWidth - welcome.Length) / 2, Console.CursorTop);
                                 Console.WriteLine(currentMenu = "FOREGROUND COLOR");
 
-                                Console.WriteLine("1. -- Red");
-                                Console.WriteLine("2. -- Green");
-                                Console.WriteLine("3. -- Yellow");
-                                Console.WriteLine("4. -- Dark Yellow");
-                                Console.WriteLine("5. -- Cyan");
-                                Console.WriteLine("6. -- White");
-                                Console.WriteLine("7. -- Default");
-                                Console.WriteLine("\n8. Exit");
+                                Console.WriteLine();
+                                string red = "-= 1. Red =-";
+                                Console.SetCursorPosition((Console.WindowWidth - red.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(red);
+
+                                string green = "-= 2. Green =-";
+                                Console.SetCursorPosition((Console.WindowWidth - green.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(green);
+
+                                string yellow = "-= 3. Yellow =-";
+                                Console.SetCursorPosition((Console.WindowWidth - yellow.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(yellow);
+
+                                string darkYellow = "-= 4. Dark Yellow =-";
+                                Console.SetCursorPosition((Console.WindowWidth - darkYellow.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(darkYellow);
+
+                                string cyan = "-= 5. Cyan =-";
+                                Console.SetCursorPosition((Console.WindowWidth - cyan.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(cyan);
+
+                                string white = "-= 6. White =-";
+                                Console.SetCursorPosition((Console.WindowWidth - white.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(white);
+
+                                string defaultColor = "-= 7. Default =-";
+                                Console.SetCursorPosition((Console.WindowWidth - defaultColor.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(defaultColor);
+
+                                Console.WriteLine();
+                                string exit = "-= 8. Exit =-";
+                                Console.SetCursorPosition((Console.WindowWidth - exit.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(exit);
+                                
 
                                 string consoleColor = Console.ReadLine();
 
@@ -363,15 +472,43 @@ namespace Hangman
                                 Console.SetCursorPosition((Console.WindowWidth - welcome.Length) / 2, Console.CursorTop);
                                 Console.WriteLine(currentMenu = "BACKGROUND COLOR");
 
-                                Console.WriteLine("1. -- Red");
-                                Console.WriteLine("2. -- Green");
-                                Console.WriteLine("3. -- Yellow");
-                                Console.WriteLine("4. -- Dark Yellow");
-                                Console.WriteLine("5. -- Cyan");
-                                Console.WriteLine("6. -- Magenta");
-                                Console.WriteLine("7. -- Dark Gray");
-                                Console.WriteLine("8. -- Default");
-                                Console.WriteLine("\n9. Exit");
+                                Console.WriteLine();
+                                string red = "-= 1. Red =-";
+                                Console.SetCursorPosition((Console.WindowWidth - red.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(red);
+
+                                string green = "-= 2. Green =-";
+                                Console.SetCursorPosition((Console.WindowWidth - green.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(green);
+
+                                string yellow = "-= 3. Yellow =-";
+                                Console.SetCursorPosition((Console.WindowWidth - yellow.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(yellow);
+
+                                string darkYellow = "-= 4. Dark Yellow =-";
+                                Console.SetCursorPosition((Console.WindowWidth - darkYellow.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(darkYellow);
+
+                                string cyan = "-= 5. Cyan =-";
+                                Console.SetCursorPosition((Console.WindowWidth - cyan.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(cyan);
+
+                                string magenta = "-= 6. Magenta =-";
+                                Console.SetCursorPosition((Console.WindowWidth - magenta.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(magenta);
+
+                                string darkGray = "-= 7. Dark Gray";
+                                Console.SetCursorPosition((Console.WindowWidth - darkGray.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(darkGray);
+
+                                string defaultColor = "-= 8. Default =-";
+                                Console.SetCursorPosition((Console.WindowWidth - defaultColor.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(defaultColor);
+
+                                Console.WriteLine();
+                                string exit = "-= 9. Exit =-";
+                                Console.SetCursorPosition((Console.WindowWidth - exit.Length) / 2, Console.CursorTop);
+                                Console.WriteLine(exit);
 
                                 string consoleColor = Console.ReadLine();
 
@@ -428,7 +565,11 @@ namespace Hangman
                     Console.SetCursorPosition((Console.WindowWidth - welcome.Length) / 2, Console.CursorTop);
                     Console.WriteLine(currentMenu = "QUIT GAME?");
 
-                    Console.Write("\nAre you sure you want to exit? Yes/ No: ");
+                    Console.WriteLine();
+                    string exitConfirm = "-= Are you sure you want to exit? Yes/ No =-";
+                    Console.SetCursorPosition((Console.WindowWidth - exitConfirm.Length) / 2, Console.CursorTop);
+                    Console.WriteLine(exitConfirm);
+
                     while (true)
                     {
                         string commandExit = Console.ReadLine();
@@ -535,7 +676,7 @@ namespace Hangman
                                "summer","sun","support","surprise","sweet","swim","system","table","tail","take","talk","tall","taste","tax","teaching","tendency","test","than","that","the","then","theory","there","thick","thin","thing",
                                "this","thought","thread","throat","through","through","thumb","thunder","ticket","tight","till","time","tin","tired","to","toe","together","tomorrow","tongue","tooth","top","touch","town","trade","train",
                                "transport","tray","tree","trick","trouble","trousers","true","turn","twist","umbrella","under","unit","up","use","value","verse","very","vessel","view","violent","voice","waiting","walk","wall","war","warm",
-                               "wash","waste","watch","water","wave","wax","way","weather","week","weight","well","west","wet","wheel","when","where","while","whip","whistle","white","who","why","wide","will","wind","window","wine","wing",
+                               "wash","waste","watch","water","wave","wax","way","weather","week","weight","well","west","wet","wheel","when","where","while","whip","whistle","magenta","who","why","wide","will","wind","window","wine","wing",
                                "winter","wire","wise","with","woman","wood","wool","word","work","worm","wound","writing","wrong","year","yellow","yes","yesterday","you","young","bernhard","breytenbach","android" };
         }
     }
