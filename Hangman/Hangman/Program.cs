@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Hangman
 {
@@ -36,11 +35,17 @@ namespace Hangman
                 Console.WriteLine(hangman[6]);
                 Console.WriteLine("\nYou died!");
                 Console.WriteLine($"Your word was: {randomWord}");
+
+                Console.WriteLine("To close the windows press any key.");
+                Console.ReadKey();
             }
             else
             {
                 Console.WriteLine("\nCongrats you won!");
                 Console.WriteLine("Thanks for playing.");
+
+                Console.WriteLine("To close the windows press any key.");
+                Console.ReadKey();
             }
         }
 
@@ -176,9 +181,9 @@ namespace Hangman
                 Console.WriteLine(creator);
                 //Main menu
                 Console.WriteLine("\n1. Start game");
-                Console.WriteLine("2. Choose dificulty (not added)");
-                Console.WriteLine("3. How to play?");
-                Console.WriteLine("4. Music (not added)");
+                Console.WriteLine("2. How to play?");
+                Console.WriteLine("3. Music (not added)");
+                Console.WriteLine("4. Choose dificulty (not added)");
                 Console.WriteLine("5. Settings");
                 Console.WriteLine("6. Exit");
 
@@ -207,12 +212,48 @@ namespace Hangman
                     break;
                 }
                 //Choosing dificutlty(not working)
-                else if (input == "2" || input == "Choose difficulty")
+                else if (input == "4" || input == "Choose difficulty")
                 {
+                   
 
+                    string difficulty = string.Empty;
+
+                    while (difficulty != "4" || difficulty != "Back to main menu")
+                    {
+                        Console.Clear();
+
+                        Console.WriteLine("1. Easy(word lenght 2 - 5)");
+                        Console.WriteLine("2. Normal(word lenght 6 - 8)");
+                        Console.WriteLine("3. Hard(word lenght 9 - 10)");
+                        Console.WriteLine("\n4. Back to main menu");
+
+                        difficulty = Console.ReadLine();
+
+                        if (difficulty == "1" || difficulty == "Easy")
+                        {
+
+                        }
+                        else if (difficulty == "2" || difficulty == "Normal")
+                        {
+
+                        }
+                        else if(difficulty == "3" || difficulty == "Hard")
+                        {
+                            
+                        }
+                        else if (difficulty == "4" || difficulty == "Back to main menu")
+                        {
+                            Console.Clear();
+                            break;
+                        }
+
+                        
+                    }
+
+                    
                 }
                 //How to play
-                else if (input == "3" || input == "How to play")
+                else if (input == "2" || input == "How to play")
                 {
                     Console.Clear();
 
@@ -230,7 +271,7 @@ namespace Hangman
                     Console.Clear();
                 }
                 //Music - To be featured
-                else if (input == "4" || input == "Music")
+                else if (input == "3" || input == "Music")
                 {
 
                 }
