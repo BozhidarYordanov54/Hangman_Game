@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "bsB99+QqTXNW2Ild0MzSK9XLbpWZfzFGM2s6b1YiAhmr3K6jupxMV5g8NdrHcnLQmYPC6L5S0VDsxP4c78L6/A==",
+  "success": true,
+  "projectFilePath": "D:\\Github Repository\\Hangman\\Hangman\\Hangman.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\UserPC\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.29\\microsoft.netcore.app.host.win-x64.3.1.29.nupkg.sha512"
+  ],
+  "logs": []
+}
